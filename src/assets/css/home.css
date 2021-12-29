@@ -1,0 +1,58 @@
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+::selection {
+    color: #e0e0e0;
+    background: rgba(255, 64, 129, 0.35);
+}
+#home-footer div {
+    font-size: 14px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.79);
+}
+#home-footer div a {
+    color: #2196f3;
+    font-weight: 700;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+.home-tr {
+    width: 80%;
+    height: 2px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.3);
+}
+#home-main {
+    width: 600px;
+    text-align: center;
+    margin: calc(50vh - 200px) auto auto;
+}
+@media (max-width: 600px) {
+    #home-main {
+        width:100%;
+    }
+}
+.home-name {
+    margin-top: 20px;
+    color: white;
+    font-size: 26px;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.55);
+}
+.home-description {
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.55);
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    letter-spacing: 8px;
+}
+.home-btn {
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+.homeTitle {
+    height: 47rem;
+    padding-top: 5rem;
+}
