@@ -20,7 +20,8 @@ export default {
       conTop: {
         backgroundImage: "url(" + require("../assets/img/pic.png") + ")",
         backgroundRepeat: "no-repeat",
-        backgroundSize: "cover"
+        backgroundSize: "cover",
+        height:'100vh',
       }
     };
   }

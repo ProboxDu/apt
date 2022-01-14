@@ -1,32 +1,40 @@
 <template>
-  <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-    <el-tab-pane label="报告上传" name="upload">
-      <el-row type="flex" justify="center">
-        <el-col :span="8">
-          <el-upload
-              ref="upload"
-              drag
-              :file-list="fileList"
-              :accept="fileType"
-              :limit="50"
-              action=""
-              multiple
-              :auto-upload="false"
-              :on-change="handleChange"
-              :on-exceed="handleExceed"
-              :http-request="uploadFile"
-              :show-file-list="false">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将待上传文件拖到此处，或<em>点击添加</em></div>
-            <div slot="tip" class="el-upload__tip">只能上传pdf、word、excel、jpg/png/gif 格式文件，且不超过100MB</div>
-          </el-upload>
-          <el-row type="flex" justify="center" style="margin-top: 5px">
-            <el-col :span="10">
-              <el-button type="primary" icon="el-icon-upload" @click="submitUpload">上传</el-button>
-            </el-col>
+<!--  <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">-->
+<!--    <el-tab-pane label="报告上传" name="upload">-->
+<!--    </el-tab-pane>-->
+<!--    <el-tab-pane label="报告管理" name="manage">报告管理</el-tab-pane>-->
+<!--  </el-tabs>-->
+  <el-container>
+    <el-main>
+      <el-row type="flex" justify="center" style="margin-top: calc(30vh - 90px)">
+        <el-col :span="8" >
+          <el-row type="flex" justify="center">
+            <el-upload
+                ref="upload"
+                drag
+                :file-list="fileList"
+                :accept="fileType"
+                :limit="10"
+                action=""
+                multiple
+                :auto-upload="false"
+                :on-change="handleChange"
+                :on-exceed="handleExceed"
+                :http-request="uploadFile"
+                :show-file-list="false">
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将待上传文件拖到此处，或<em>点击添加</em>
+                <div slot="tip" class="el-upload__tip">只能上传pdf、word、excel、jpg/png/gif格式文件</div>
+                <div slot="tip" class="el-upload__tip">文件大小不超过100MB</div>
+              </div>
+            </el-upload>
+          </el-row>
+          <el-row type="flex" justify="center">
+            <el-button type="primary" icon="el-icon-upload" @click="submitUpload">上传</el-button>
           </el-row>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6" v-if="fileList.length > 0">
+          <h2 style="text-align: center">待上传文件列表</h2>
           <el-table
               :data="fileList"
               stripe
@@ -47,9 +55,8 @@
           </el-table>
         </el-col>
       </el-row>
-    </el-tab-pane>
-    <el-tab-pane label="报告管理" name="manage">报告管理</el-tab-pane>
-  </el-tabs>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -59,6 +66,7 @@ export default {
   data() {
     return {
       activeName: 'upload',
+      dialogVisible: false,
       fileType: '.png,.gif,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf',
       fileData: '',  // 文件上传数据（多文件合一）
       fileList:[]
@@ -122,6 +130,7 @@ export default {
             let status = res.status;
             if (status === 200){
               this.fileList = [];
+              this.dialogVisible=true
               this.$message.info("upload success!")//res.obj)
             }else{
               this.$message.error(res.message)
@@ -135,5 +144,8 @@ export default {
 </script>
 
 <style scoped>
-
+.el-upload__tip {
+  font-size: 8px;
+  margin-top: 5px;
+}
 </style>

@@ -7,6 +7,7 @@ import router from './router'
 import store from './store'
 import Vuex from 'vuex'
 import "./assets/css/index.css";
+import 'vue-json-viewer/style.css'
 
 // 不显示生产提示信息
 Vue.config.productionTip = false
@@ -18,8 +19,6 @@ Vue.use(ElementUI)
 Vue.prototype.$http = axios
 //axios.defaults.baseURL = 'http://127.0.0.1:8000'
 //axios.defaults.headers.post['Content-Type'] = 'multipart/form-data'//'application/x-www-fromurlencodeed'
-
-//使用 const { data: ret } = await this.$http.get('trend')
 
 new Vue({
   render: h => h(App),
