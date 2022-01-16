@@ -32,13 +32,12 @@ export default {
   data() {
     return {
       indexList:[
-        {index:'/home/reportsearch', label: '报告全文检索'},
-        {index:'/home/intelligence', label: '情报查询'},
-        {index:'/home/aptaa', label: 'APT图谱关联分析'},
-        {index:'/home/reportmanage', label: '报告上传与管理'},
-        {index:'/home/audit', label: '信息审核'},
+        {index:'/reportsearch', label: '报告全文检索'},
+        {index:'/aptaa', label: '情报查询与分析'},
+        {index:'/reportmanage', label: '报告上传与管理'},
+        {index:'/audit', label: '信息审核'},
       ],
-      activeIndex: "/home/reportsearch"
+      activeIndex: "/reportsearch"
     };
   },
   methods: {

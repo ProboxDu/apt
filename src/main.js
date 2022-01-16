@@ -7,7 +7,8 @@ import router from './router'
 import store from './store'
 import Vuex from 'vuex'
 import "./assets/css/index.css";
-import 'vue-json-viewer/style.css'
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
 
 // 不显示生产提示信息
 Vue.config.productionTip = false
@@ -15,6 +16,7 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(router)
 Vue.use(ElementUI)
+Vue.use(VueCodemirror)
 
 Vue.prototype.$http = axios
 //axios.defaults.baseURL = 'http://127.0.0.1:8000'

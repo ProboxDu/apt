@@ -6,7 +6,7 @@
       </div>
       <div class="home-description">「APT威胁情报知识库」</div>
       <div class="home-tr"></div>
-      <a class="home-btn" href="/home">查询入口</a>
+      <a class="home-btn" href="/reportsearch">查询入口</a>
 <!--      <div class="home-tr"></div>-->
     </main>
   </div>

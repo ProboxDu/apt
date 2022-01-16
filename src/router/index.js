@@ -10,16 +10,16 @@ VueRouter.prototype.push = function push(location) {
 
 const routes = [
     {
-        path: '/',
+        path: '/index',
         component: () => import('@/views/Index.vue'),
         meta: {
             title: "APT威胁情报知识库"
         }
     },
     {
-        path: '/home',
+        path: '/',
         name: 'Home',
-        redirect: '/home/reportsearch',
+        redirect: '/index',
         component: () => import('@/views/home/Home.vue'),
         children:[
             {

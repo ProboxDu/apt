@@ -42,16 +42,13 @@
           <iframe v-else-if="radio === 'HTML'" :src="htmlUrl" height="100%" width="100%" style="border: none"></iframe>
           <img v-else :src="picUrl" height="100%" width="100%" alt="none">
         </el-col>
-        <el-col :span="6" style="overflow-y: auto;height: 100%;">
-          <vue-json-editor
+        <el-col :span="6" style="height: 100%;">
+          <JsonEditor
+              ref="jsonEditor"
               v-model="ioc_result"
-              :showBtns="true"
-              :mode="'code'"
-
-              @json-change="onJsonChange"
-              @json-save="onJsonSave"
-              @has-error="onError"
-              style="height: 100%"/>
+              :show-save-btns="true"
+              @onJsonSave="onJsonSave"
+          ></JsonEditor>
         </el-col>
       </el-row>
     </el-main>
@@ -59,11 +56,11 @@
 </template>
 
 <script>
-import vueJsonEditor from 'vue-json-editor'
+import JsonEditor from "@/components/JsonEditor";
 export default {
   name: "Audit",
   components:{
-    vueJsonEditor
+    JsonEditor
   },
   data() {
     return {
@@ -105,35 +102,19 @@ export default {
     handleSelectionChange(){
       // this.multipleSelection = val;
     },
-    onJsonChange (value) {
-      // console.log('更改value:', value);
-      // 实时保存
-      this.onJsonSave(value)
-    },
-    onJsonSave (value) {
-      // console.log('保存value:', value);
-      this.$message.success("保存成功");
-      this.jsonData = value
-      //this.hasJsonFlag = true
-    },
-    onError(value) {
-      this.$message.error("json格式错误, value:", value);
-      //this.hasJsonFlag = false
-    },
+    onJsonSave(value) {
+      if (this.jsonCode !== value) {
+        this.jsonCode = value;
+      }
+      console.log(this.jsonCode)
+    }
   },
   created() {
     // this.jsonData =  JSON.parse(JSON.stringify(this.jsonData));
     // console.log(this.jsonData)
   },
   mounted() {
-    // for (let i in this.ioc_result){
-    //   this.ioc_result[i] = this.ioc_result[i].map(row => {
-    //     return {
-    //       value: row,
-    //       editMode: false
-    //     };
-    //   });
-    // }
+
   },
   watch: {
 
