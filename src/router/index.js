@@ -28,11 +28,6 @@ const routes = [
                 component: () => import('../views/home/ReportSearch.vue')
             },
             {
-                path: 'intelligence',
-                name: 'IntelligenceSearch',
-                component: () => import('../views/home/IntelligenceSearch.vue')
-            },
-            {
                 path: 'aptaa',
                 name: 'APTAssociationAnalysis',
                 component: () => import('../views/home/APTAssociationAnalysis.vue')

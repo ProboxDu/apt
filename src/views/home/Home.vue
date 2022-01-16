@@ -17,7 +17,6 @@
 <script>
 import Header from "@/components/Header";
 import ReportSearch from "@/views/home/ReportSearch";
-import IntelligenceSearch from "@/views/home/IntelligenceSearch";
 import APTAssociationAnalysis from "@/views/home/APTAssociationAnalysis";
 import ReportManage from "@/views/home/ReportManage";
 import Audit from "@/views/home/Audit";
@@ -28,7 +27,6 @@ export default {
     Footer,
     Header,
     ReportSearch,
-    IntelligenceSearch,
     APTAssociationAnalysis,
     ReportManage,
     Audit,
