@@ -202,7 +202,7 @@
                     prop="name"
                     width="100">
                 </el-table-column>
-                <el-table-column width="100" label="显示信息">
+                <el-table-column width="160" label="显示信息">
                   <template slot-scope="scope">
                     <div>
                       <el-button
