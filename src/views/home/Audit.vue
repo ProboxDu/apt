@@ -109,14 +109,14 @@ export default {
       this.currentRow = val;
       if (val.state_code === 1){
         if (this.radio === 'PDF'){
-          this.pdfUrl = val.highlight_pdf_path
-          //val.url
+          this.pdfUrl = val.highlight_pdf_url
+          // console.log(this.pdfUrl)
         }else if (this.radio === 'HTML'){
           this.htmlUrl = val.url
         }else{
           this.picUrl = val.url
         }
-        this.ioc_result = val.ioc_result_content
+        this.ioc_result = JSON.parse(val.ioc_result_content)
       }else {
         this.pdfUrl = '';
         this.htmlUrl = '';
@@ -171,7 +171,7 @@ export default {
     this.$http.post('/api/infoExtract/refresh_progress/', params).then((res)=>{
       let status = res.status;
       if (status === 200){
-        console.log(res.data)
+        // console.log(res.data)
         if (res.data['label'] === 0){
           this.fileList = JSON.parse(res.data['message']).progress_result_list
           console.log(this.fileList)
