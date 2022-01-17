@@ -20,7 +20,7 @@
               :data="fileList"
               highlight-current-row
               @current-change="handleCurrentChange"
-              style="width: 100%">
+              style="width: 100%;">
             <el-table-column
                 prop="file_name"
                 label="文件名"
@@ -107,7 +107,7 @@ export default {
     handleCurrentChange(val) {
       // console.log(val)
       this.currentRow = val;
-      if (val.status === 1){
+      if (val.state_code === 1){
         if (this.radio === 'PDF'){
           this.pdfUrl = val.highlight_pdf_path
           //val.url
