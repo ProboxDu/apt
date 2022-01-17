@@ -44,6 +44,10 @@ const routes = [
             },
         ]
     },
+    {
+        path: '/pdfviewer',
+        component: () => import('@/components/PDFViewer.vue')
+    }
 ]
 
 const router = new VueRouter({

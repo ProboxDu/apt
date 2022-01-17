@@ -126,7 +126,7 @@ export default {
           this.$refs.upload.submit(); // 提交调用uploadFile函数
           //this.fileData.append('key', this.userKey); // 除了上传文件还能同时传数据
           ///console.log("data:", this.fileData)
-          this.$http.post('/upload/',this.fileData).then((res)=>{
+          this.$http.post('api/infoExtract/upload/',this.fileData).then((res)=>{
             let status = res.status;
             if (status === 200){
               this.fileList = [];

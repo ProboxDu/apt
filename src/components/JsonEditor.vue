@@ -1,11 +1,9 @@
 <template>
   <div class="json-editor">
-    <el-row style="height: calc(90vh - 130px);overflow-y: auto;">
+    <el-row style="height: 100%;overflow-y: auto;">
       <textarea ref="codemirror"/>
     </el-row>
-    <el-row  v-if="showSaveBtns!==false" type="flex" justify="center" style="margin-top: 10px">
-      <el-button type="primary" size='mini' @click="onJsonSave()">SAVE</el-button>
-    </el-row>
+    <slot></slot>
   </div>
 </template>
 
@@ -59,7 +57,6 @@ export default {
   /* eslint-disable vue/require-prop-types */
   props: {
     value: [String, Number, Object, Array],
-    showSaveBtns: [Boolean],
     readOnly: [Boolean],
   },
   data() {
@@ -75,6 +72,7 @@ export default {
       if (value !== editorValue) {
         this.jsonEditor.setValue(JSON.stringify(this.value, null, 2));
       }
+      this.jsonEditor.refresh()
     },
   },
   mounted() {
@@ -109,9 +107,6 @@ export default {
   methods: {
     getValue() {
       return this.jsonEditor.getValue();
-    },
-    onJsonSave() {
-      this.$emit("onJsonSave", JSON.parse(this.jsonEditor.getValue()));
     },
   }
 };

@@ -99,7 +99,9 @@ export default {
             this.reports = res.data['message']
             this.$nextTick(() => {
               if( this.reports.length > 0){
+                console.log('set currentrow')
                 this.$refs.reportsTable.setCurrentRow(1);
+                this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
               }
             });
           }else {
@@ -120,8 +122,9 @@ export default {
     handleCurrentChange(val) {
       console.log(val)
       this.currentRow = val;
-      //this.pdfUrl = "/static/【奇安信】盲眼鹰（APT-C-36）针对哥伦比亚政企机构的攻击活动揭露.pdf"
-      this.pdfUrl = this.reports[Object.keys(this.reports)[val - 1]].url
+      this.pdfUrl = val.url
+      //this.pdfUrl = this.reports[Object.keys(this.reports)[val - 1]]
+      // console.log(this.pdfUrl.toString())
     }
   }
 }
