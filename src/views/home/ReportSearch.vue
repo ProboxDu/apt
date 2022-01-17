@@ -19,10 +19,10 @@
             </el-select>
             <el-button type="primary" slot="append" icon="el-icon-search" @click="onSubmit"></el-button>
           </el-input>
-          <div style="margin-top: 10px">
-            <el-checkbox v-model="form.condition" true-label="and" false-label="or">精确查询(多条件)</el-checkbox>
-            <el-checkbox v-model="form.word_segment" true-label="true" false-label="false">模糊匹配</el-checkbox>
-          </div>
+<!--          <div style="margin-top: 10px">-->
+<!--            <el-checkbox v-model="form.condition" true-label="and" false-label="or">精确查询(多条件)</el-checkbox>-->
+<!--            <el-checkbox v-model="form.word_segment" true-label="true" false-label="false">模糊匹配</el-checkbox>-->
+<!--          </div>-->
         </el-col>
       </el-row>
       <el-row  v-if="search && (reports.length > 0)" type="flex" justify="space-around" style="height: calc(85vh - 100px); margin-top: 10px">

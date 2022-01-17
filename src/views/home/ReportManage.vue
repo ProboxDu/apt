@@ -55,6 +55,15 @@
           </el-table>
         </el-col>
       </el-row>
+      <el-dialog
+          title="提示"
+          :visible.sync="dialogVisible"
+          width="30%">
+        <span>是否立即进行信息审核？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="onClickAudit">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </el-container>
 </template>
@@ -65,7 +74,7 @@ export default {
   name: "ReportManagement",
   data() {
     return {
-      activeName: 'upload',
+      // activeName: 'upload',
       dialogVisible: false,
       fileType: '.png,.gif,.jpeg,.jpg,.xls,.xlsx,.doc,.docx,.pdf',
       fileData: '',  // 文件上传数据（多文件合一）
@@ -138,8 +147,13 @@ export default {
           });
         }
       }
+    },
+    onClickAudit(){
+      this.dialogVisible = false
+      this.$router.push('/audit')
+      this.$router.go(0)
     }
-  }
+  },
 }
 </script>
 

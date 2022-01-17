@@ -22,7 +22,7 @@
     <div v-if="has_search" class="content">
       <div class="tab_content flex">
 
-        <el-row  justify="center" v-if="show_page==='query'">
+        <el-row  justify="center" v-if="show_page=='query'">
           <el-col :span="6">
             <div style="margin-top:45px;margin-left:30px;height:600px">
               <el-table
@@ -83,7 +83,23 @@
           </el-col>
           <el-col :span="5">
             <div style="margin-right:40px">
-              <div  style="margin-top:40px;margin-left:40px">
+
+              <div  style="margin-top:40px;margin-left:40px" v-if="kind==='report'">
+                <el-table
+                    :data="reportData"
+                    style="width: 100%"
+                    key="query_table_2"
+                    max-height="150">
+                  <el-table-column
+                      fixed
+                      prop="value"
+                      :label="reportName"
+                      width="200">
+                  </el-table-column>
+
+                </el-table>
+              </div>
+              <div  style="margin-top:40px;margin-left:40px" v-else>
                 <el-table
                     :data="groupData"
                     style="width: 100%"
@@ -98,6 +114,7 @@
 
                 </el-table>
               </div>
+
 
               <div  style="margin-top:30px;margin-left:40px">
                 <el-table
@@ -156,7 +173,7 @@
           </el-col>
         </el-row>
 
-        <el-row  justify="center" v-else-if="show_page==='report'">
+        <el-row  justify="center" v-else-if="show_page=='report'">
           <el-col :span="7">
             <div style="margin-top:50px;margin-left:70px;height:600px">
               <div>
@@ -185,37 +202,39 @@
                 </div>
               </div>
 
+              <div style="width:350px">
+                <el-table
+                    :data="data.slice(1)"
+                    style="width:100%"
+                    key="report_table_1"
+                    max-height="400">
 
-              <el-table
-                  :data="data.slice(1)"
-                  style="width: 100%"
-                  key="report_table_1"
-                  max-height="400">
+                  <el-table-column
+                      label="类别"
+                      prop="chineseLabel"
+                      width="80">
+                  </el-table-column>
+                  <el-table-column
+                      label="关键词"
+                      prop="name"
+                      width="100">
+                  </el-table-column>
+                  <el-table-column width="160" label="显示信息">
+                    <template slot-scope="scope">
+                      <div>
+                        <el-button
+                            size="mini"
+                            type="primary"
+                            @click="showMiddle(scope.$index)">显示</el-button>
+                        <el-button
+                            size="mini"
+                            @click="hideMiddle()">缩回</el-button>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
 
-                <el-table-column
-                    label="类别"
-                    prop="chineseLabel"
-                    width="80">
-                </el-table-column>
-                <el-table-column
-                    label="关键词"
-                    prop="name"
-                    width="100">
-                </el-table-column>
-                <el-table-column width="160" label="显示信息">
-                  <template slot-scope="scope">
-                    <div>
-                      <el-button
-                          size="mini"
-                          type="primary"
-                          @click="showMiddle(scope.$index)">显示</el-button>
-                      <el-button
-                          size="mini"
-                          @click="hideMiddle()">缩回</el-button>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
             </div>
 
 
@@ -256,7 +275,7 @@
           </el-col>
         </el-row>
 
-        <el-row  justify="center" v-else-if="show_page==='group'">
+        <el-row  justify="center" v-else-if="show_page=='group'">
           <el-col :span="7">
             <div style="margin-top:100px;margin-left:10px;height:600px">
               <div style="width:100px">
@@ -422,6 +441,7 @@ export default {
       ipData:[],
       domainData:[],
       reportData: [],
+      kind:"report",
       otherIOC : "其它IOC 数量：",
       ipName: "相关IP 数量： ",
       domainName:"相关域名 数量：",
@@ -658,7 +678,7 @@ export default {
           categories: this.categories
         }]
       }
-      console.log(option)
+
       setTimeout(this.myChart.setOption(option), 500);
 
     },
@@ -667,6 +687,9 @@ export default {
       this.iocData = []
       this.ipData = []
       this.domainData = []
+      this.reportData = []
+      console.log(this.data[index].associated)
+      this.createTableData(this.data[index].associated.report,this.reportData)
       this.createTableData(this.data[index].associated.group,this.groupData)
       this.createTableData(this.data[index].associated.ip,this.ipData)
       this.createTableData(this.data[index].associated.domain,this.domainData)
@@ -676,12 +699,17 @@ export default {
       this.createTableData(this.data[index].associated.file,this.iocData)
       this.createTableData(this.data[index].associated.registry,this.iocData)
       this.createTableData(this.data[index].associated.hostpath,this.iocData)
+      this.reportName = "相关报告 数量：" + this.reportData.length
       this.otherIOC = "其它IOC 数量：" + this.iocData.length
       this.ipName= "相关IP 数量： " + this.ipData.length
       this.domainName="相关域名 数量："+ this.domainData.length
       this.aptName = "相关组织 数量: " + this.groupData.length
       // 把图改成单个的图
-
+      if(this.data[index].label==='report'){
+        this.kind = "group"
+      }else{
+        this.kind = "report"
+      }
 
       this.nodes = this.data[index].graph.nodes
       this.links = this.data[index].graph.links
@@ -796,10 +824,18 @@ export default {
       this.links = this.val.graph.links
       this.data = this.val.data
 
-      if(this.data.length===0){
+      if(this.data.length==0){
         this.select = "none"
         this.show_page = "none"
+      }else{
+        if(this.data[0].label==="report"){
+          this.kind = "group"
+        }else{
+          this.kind = "report"
+        }
       }
+
+
 
 
 
@@ -827,12 +863,12 @@ export default {
           this.data[i].chineseLabel=this.data[i].label
         }
       }
-
+      this.reportData = []
       this.groupData = []
       this.iocData = []
-      if(this.select === "query"){
-        console.log("----------------------------")
+      if(this.select == "query"){
         for(let i in this.data){
+          this.createTableData(this.val.data[i].associated.report,this.reportData)
           this.createTableData(this.val.data[i].associated.group,this.groupData)
           this.createTableData(this.val.data[i].associated.ip,this.ipData)
           this.createTableData(this.val.data[i].associated.domain,this.domainData)
@@ -883,14 +919,9 @@ export default {
             //edgeSymbol: ['', 'arrow'],
             cursor: 'pointer',
             lineStyle: {
-
-              color:function (params){
-                console.log("lalalla",params)
-                return "#34baed"
-              }
-
+              color:"#34baed"
             },
-            emphasis: { //  鼠标悬浮高亮图形的样式
+            emphasis:{ //  鼠标悬浮高亮图形的样式
               itemStyle: {
                 borderColor: 'black',
                 borderWidth: 1,
