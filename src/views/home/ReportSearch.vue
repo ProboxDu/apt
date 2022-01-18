@@ -41,6 +41,9 @@
             <el-table-column
                 property="title"
                 label="标题">
+              <template v-slot="scope">
+                <span v-html="showHighlight(scope.row)"></span>
+              </template>
             </el-table-column>
           </el-table>
         </el-col>
@@ -94,12 +97,12 @@ export default {
       this.$http.post('/api/search/es_doc/', params).then((res)=>{
         let status = res.status;
         if (status === 200){
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data['label'] === 0){
             this.reports = res.data['message']
             this.$nextTick(() => {
               if( this.reports.length > 0){
-                console.log('set currentrow')
+                // console.log('set currentrow')
                 this.$refs.reportsTable.setCurrentRow(1);
                 this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
               }
@@ -120,19 +123,31 @@ export default {
       });
     },
     handleCurrentChange(val) {
-      console.log(val)
+      // console.log(val)
       this.currentRow = val;
       this.pdfUrl = val.url
       //this.pdfUrl = this.reports[Object.keys(this.reports)[val - 1]]
       // console.log(this.pdfUrl.toString())
+    },
+    showHighlight(val){
+      // console.log(val)
+      let text = val.highlight_title + '';
+      if ( text.indexOf('<em>') !== -1 &&  text.indexOf('</em>') !== -1) {
+        text = text.replaceAll('<em>', '<span class="highlight_keywords">')
+        text = text.replaceAll('</em>', '</span>')
+      }
+      console.log(text)
+      return text
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .middle{
   margin-top: calc(40vh - 90px);
 }
-
+.highlight_keywords{
+  color: red
+}
 </style>
