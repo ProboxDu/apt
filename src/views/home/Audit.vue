@@ -7,7 +7,7 @@
   <el-container>
     <el-main>
       <el-row type="flex" justify="center" v-if="fileList.length > 0" style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
-        <el-col  :span="5">
+        <el-col ref="auditList" >
           <h2 style="text-align: center;margin-bottom: 10px;">待审核文件列表</h2>
           <el-row type="flex" justify="center">
             <el-radio-group v-model="radio" @change="radioChange()">
@@ -17,10 +17,10 @@
             </el-radio-group>
           </el-row>
           <el-table
-              :data="fileList"
+              :data="fileList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               highlight-current-row
               @current-change="handleCurrentChange"
-              style="width: 100%;">
+              style="">
             <el-table-column
                 prop="file_name"
                 label="文件名"
@@ -36,6 +36,18 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-row type="flex" justify="center" >
+            <el-col :span="6">
+              <el-pagination
+                  :hide-on-single-page="pageNumber <= 1"
+                  @current-change="handleCurrentPageChange"
+                  :current-page="currentPage"
+                  :page-size="pageSize"
+                  layout="prev, pager, next"
+                  :total="pageNumber">
+              </el-pagination>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="12" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
           <iframe v-if="radio === 'PDF'" :src="pdfUrl" height="100%" width="100%" style="border: none"></iframe>
@@ -56,7 +68,6 @@
               </el-row>
             </JsonEditor>
           </el-row>
-
         </el-col>
       </el-row>
       <el-row type="flex" justify="center" v-else style="margin-top: calc(30vh - 90px);min-height: 300px">
@@ -93,16 +104,23 @@ export default {
       dialogVisible: false,
       radio: 'PDF',
       fileList:[],
-      currentRow: 1,
+      currentRow: null,
       pdfUrl:"",
       htmlUrl:"",
       picUrl: "",
-      ioc_result: {}
+      ioc_result: {},
+      pageNumber: 1,
+      currentPage: 1,
+      pageSize:10,
     };
   },
   methods: {
     radioChange(){
       console.log(this.radio)
+    },
+    handleCurrentPageChange(val) {
+      // 改变默认的页数
+      this.currentPage = val
     },
     handleCurrentChange(val) {
       // console.log(val)
@@ -117,12 +135,14 @@ export default {
           this.picUrl = val.url
         }
         this.ioc_result = JSON.parse(val.ioc_result_content)
+        this.$refs.auditList.span = 5
       }else {
         this.pdfUrl = '';
         this.htmlUrl = '';
         this.picUrl = '';
         this.ioc_result = {}
         this.dialogVisible = true
+        this.$refs.auditList.span = 9
       }
     },
     onJsonSave(){
@@ -158,11 +178,10 @@ export default {
         console.log(error)
         this.$message.error(error.toString())
       });
-    }
+    },
   },
   created() {
-    // this.jsonData =  JSON.parse(JSON.stringify(this.jsonData));
-    // console.log(this.jsonData)
+
   },
   mounted() {
     let params = {
@@ -174,6 +193,7 @@ export default {
         // console.log(res.data)
         if (res.data['label'] === 0){
           this.fileList = JSON.parse(res.data['message']).progress_result_list
+          this.pageNumber = this.fileList.length
           console.log(this.fileList)
         }else {
           this.$alert(res.data['message'], '提示', {
@@ -191,7 +211,11 @@ export default {
     });
   },
   watch: {
-
+    fileList: function(newValue) {
+      if (newValue.length > 0){
+        this.$refs.auditList.span = 9
+      }
+    },
   },
 }
 </script>

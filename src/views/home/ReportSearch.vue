@@ -6,7 +6,7 @@
 <!--  </el-tabs>-->
   <el-container>
     <el-main>
-      <el-row type="flex" justify="center" v-bind:class="{middle: !(search && (reports.length > 0)) }">
+      <el-row type="flex" justify="center" v-bind:class="{middle: !(search && (reportsTableData.length > 0)) }">
         <el-col :span="12">
           <el-input placeholder="请输入关键词，多个输入请用中文分号分隔" v-model="form.keywords">
             <el-select v-model="form.range" slot="prepend" style="width:120px">
@@ -25,11 +25,11 @@
 <!--          </div>-->
         </el-col>
       </el-row>
-      <el-row  v-if="search && (reports.length > 0)" type="flex" justify="space-around" style="height: calc(85vh - 100px); margin-top: 10px">
+      <el-row  v-if="search && (reportsTableData.length > 0)" type="flex" justify="space-around" style="height: calc(85vh - 100px); margin-top: 10px">
         <el-col :span="6" >
           <el-table
               ref="reportsTable"
-              :data="reports"
+              :data="reportsTableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               highlight-current-row
               @current-change="handleCurrentChange"
               style="width: 100%"
@@ -46,6 +46,18 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-row type="flex" justify="center" >
+            <el-col :span="6">
+              <el-pagination
+                  :hide-on-single-page="pageNumber <= 1"
+                  @current-change="handleCurrentPageChange"
+                  :current-page="currentPage"
+                  :page-size="pageSize"
+                  layout="prev, pager, next"
+                  :total="pageNumber">
+              </el-pagination>
+            </el-col>
+          </el-row>
         </el-col>
         <el-col :span="16" style="height:100%">
           <iframe :src="pdfUrl" height="100%" width="100%" style="border: none"></iframe>
@@ -76,15 +88,18 @@ export default {
         value: 'document',
         label: '报告内容',
       }],
-      reports: [],
+      reportsTableData: [],
       currentRow: null,
-      pdfUrl:''
+      pdfUrl:'',
+      pageNumber: 1,
+      currentPage: 1,
+      pageSize:10,
     }
   },
   methods: {
     async onSubmit() {
       this.currentRow = null
-      this.reports = []
+      this.reportsTableData = []
       this.search = true
       if (this.form.keywords === ''){
         this.$message.error('请输入关键词查询')
@@ -99,12 +114,15 @@ export default {
         if (status === 200){
           // console.log(res.data)
           if (res.data['label'] === 0){
-            this.reports = res.data['message']
+            this.reportsTableData = res.data['message']
+            this.pageNumber = this.reportsTableData.length
+            // console.log(this.reportsTableData)
+            // console.log(this.pageNumber)
             this.$nextTick(() => {
-              if( this.reports.length > 0){
+              if( this.reportsTableData.length > 0){
                 // console.log('set currentrow')
                 this.$refs.reportsTable.setCurrentRow(1);
-                this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
+                this.pdfUrl = this.reportsTableData[Object.keys(this.reportsTableData)[0]].url
               }
             });
           }else {
@@ -112,8 +130,6 @@ export default {
               confirmButtonText: '确定',
             });
           }
-          //this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
-          //console.log(this.pdfUrl)
         }else{
           this.$message.error(res.message)
         }
@@ -126,8 +142,19 @@ export default {
       // console.log(val)
       this.currentRow = val;
       this.pdfUrl = val.url
-      //this.pdfUrl = this.reports[Object.keys(this.reports)[val - 1]]
       // console.log(this.pdfUrl.toString())
+    },
+    // // 每页显示的条数
+    // handlePageSizeChange(val) {
+    //   // 改变每页显示的条数
+    //   this.pageSize = val
+    //   // 注意：在改变每页显示的条数时，要将页码显示到第一页
+    //   this.currentPage = 1
+    // },
+    // 显示第几页
+    handleCurrentPageChange(val) {
+      // 改变默认的页数
+      this.currentPage = val
     },
     showHighlight(val){
       // console.log(val)
