@@ -37,16 +37,14 @@
             </el-table-column>
           </el-table>
           <el-row type="flex" justify="center" >
-            <el-col :span="6">
-              <el-pagination
-                  :hide-on-single-page="pageNumber <= 1"
-                  @current-change="handleCurrentPageChange"
-                  :current-page="currentPage"
-                  :page-size="pageSize"
-                  layout="prev, pager, next"
-                  :total="pageNumber">
-              </el-pagination>
-            </el-col>
+            <el-pagination
+                :hide-on-single-page="pageNumber <= 1"
+                @current-change="handleCurrentPageChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="prev, pager, next"
+                :total="pageNumber">
+            </el-pagination>
           </el-row>
         </el-col>
         <el-col :span="12" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
