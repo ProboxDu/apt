@@ -34,6 +34,7 @@ export default {
       indexList:[
         {index:'/reportsearch', label: '报告全文检索'},
         {index:'/aptaa', label: '情报查询与分析'},
+        {index:'/apto', label: 'APT组织'},
         {index:'/reportmanage', label: '报告上传与管理'},
         {index:'/audit', label: '信息审核'},
       ],

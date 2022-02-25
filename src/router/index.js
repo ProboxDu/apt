@@ -33,6 +33,11 @@ const routes = [
                 component: () => import('../views/home/APTAssociationAnalysis.vue')
             },
             {
+                path: 'apto',
+                name: 'APTOrganization',
+                component: () => import('../views/home/APTOrganization.vue')
+            },
+            {
                 path: 'reportmanage',
                 name: 'ReportManage',
                 component: () => import('../views/home/ReportManage.vue')
