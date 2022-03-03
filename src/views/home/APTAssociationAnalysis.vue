@@ -302,8 +302,8 @@
                   <span style="font-weight:bold;font-size:20px;padding-right:10px">攻击行业</span>
                   {{this.data[0].industry.join(",")}}
                 </div>
-                <div style="margin-top:10px" v-if="this.data[0].predict!=null">
-                  <span style="font-weight:bold;font-size:20px;padding-right:10px">预测</span>
+                <div style="margin-top:10px;" v-if="this.data[0].predict!=null">
+                  <span style="font-weight:bold;font-size:20px;padding-right:10px;background-color:#409EFF;color:white;text-align:center;display:block;">预测</span>
                   {{this.data[0].predict}}
                 </div>
               </div>
@@ -430,11 +430,11 @@ export default {
       nodes:[{id:0,name:'test1'},{id:1,name:'test2'}],
       links:[{source:0,target:1,name:'testline'}],
       categories:[
-        {name:'report'},
-        {name:'group'},
-        {name:'background'},
-        {name:'IOC'},
-        {name:'technique'},
+        {name:'报告'},
+        {name:'组织'},
+        {name:'背景'},
+        {name:'失陷指标'},
+        {name:'技术'},
       ],
       groupData: [],
       iocData:[],
@@ -823,7 +823,7 @@ export default {
       this.nodes = this.val.graph.nodes
       this.links = this.val.graph.links
       this.data = this.val.data
-
+      console.log(this.val.graph)
       if(this.data.length==0){
         this.select = "none"
         this.show_page = "none"
@@ -834,9 +834,6 @@ export default {
           this.kind = "report"
         }
       }
-
-
-
 
 
       for(let i in this.data){
@@ -978,7 +975,28 @@ export default {
         }
         this.myChart.setOption(option)
 
+
+        let that = this
+        that.myChart.on('click',async function(p){
+          //console.log("打印变量")
+
+          const { data: ret } = await that.$http.get('/api/analyse/explore_graph',{params:p.data})
+          let val = ret
+          //console.log(val)
+          that.nodes = val.nodes
+          that.links = val.links
+
+          let option = {
+            series: [{
+              nodes: that.nodes,  // 节点数据列表
+              links: that.links, // 关系数据列表
+            }]
+          }
+          that.myChart.setOption(option)
+        })
+
       })
+
 
     },
   }

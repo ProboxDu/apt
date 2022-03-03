@@ -63,6 +63,7 @@
                   <el-button type="primary" @click="onJsonSave" size="mini">保存</el-button>
                   <el-button type="primary" @click="onJsonSubmit" size="mini">提交</el-button>
                 </el-button-group>
+                <el-button type="primary" @click="onJsonExport" size="mini">导出</el-button>
               </el-row>
             </JsonEditor>
           </el-row>
@@ -176,6 +177,19 @@ export default {
         console.log(error)
         this.$message.error(error.toString())
       });
+    },
+    onJsonExport(){
+      var data = JSON.stringify(this.ioc_result)
+      //encodeURIComponent解决中文乱码
+      let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(data);
+      //通过创建a标签实现
+      let link = document.createElement("a");
+      link.href = uri;
+      //对下载的文件命名
+      link.download =  "ioc_result.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   created() {
