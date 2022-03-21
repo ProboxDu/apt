@@ -11,11 +11,6 @@ module.exports = {
                     '^/api': ''
                 }
             },
-            '/upload':{
-                target: 'http://localhost:8000',
-                ws: true,
-                changeOrigin: true,
-            },
         },
         disableHostCheck: true,
     }

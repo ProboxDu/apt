@@ -47,12 +47,20 @@ const routes = [
                 name: 'Audit',
                 component: () => import('../views/home/Audit.vue')
             },
+            {
+                path: 'information',
+                component: () => import('@/views/home/Information')
+            },
+            {
+                path: '/groupinfo',
+                component: () => import('@/views/home/Group')
+            }
         ]
     },
     {
         path: '/pdfviewer',
         component: () => import('@/components/PDFViewer.vue')
-    }
+    },
 ]
 
 const router = new VueRouter({
