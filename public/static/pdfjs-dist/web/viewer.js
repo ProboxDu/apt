@@ -1778,8 +1778,13 @@ const PDFViewerApplication = {
     const urlPath = decodeURIComponent(window.location.href);
     const index = urlPath.indexOf("&query");   //获取关键词
     //对查询输入框进行赋值
-    document.getElementById("findInput").value=urlPath.substr(index + 7);
-    document.getElementById("findHighlightAll").click();
+    console.log(index)
+    if (index >= 0){
+      document.getElementById("viewFind").click()
+      document.getElementById("findInput").value=urlPath.substr(index + 7);
+      document.getElementById("findHighlightAll").click();
+    }
+
   },
 
   _cleanup() {

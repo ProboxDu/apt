@@ -48,7 +48,7 @@
           </el-row>
         </el-col>
         <el-col :span="12" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
-          <iframe v-if="radio === 'PDF'" :src="pdfUrl" height="100%" width="100%" style="border: none"></iframe>
+          <iframe v-if="radio === 'PDF'"  :src="'/static/pdfjs-dist/web/viewer.html?file=' + pdfUrl" height="100%" width="100%" style="border: none"></iframe>
           <iframe v-else-if="radio === 'HTML'" :src="htmlUrl" height="100%" width="100%" style="border: none"></iframe>
           <img v-else :src="picUrl" height="100%" width="100%" alt="none">
         </el-col>

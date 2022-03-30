@@ -127,6 +127,9 @@
                       prop="value"
                       :label="ipName"
                       width="200">
+                    <template v-slot="scope">
+                      <span v-text="scope.row.value" @click="goVt(scope.row.value)"></span>
+                    </template>
                   </el-table-column>
 
                 </el-table>
@@ -1009,6 +1012,9 @@ export default {
 
 
     },
+    goVt(val){
+      window.open('https://www.virustotal.com/gui/ip-address/' + val,'_blank');
+    }
   }
 }
 </script>
