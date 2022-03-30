@@ -4,10 +4,10 @@
     <el-col :span="6">
       <div style="margin-top:50px;margin-left:80px;height:600px">
         <router-link to="/information" tag="button" style="background-color:#6698cb;color:white;font-size:10px;border-radius:4px;padding:6px">返回组织列表页面</router-link>
-        <div style="width:100px;margin-top:20px">
+        <div style="width:200px;margin-top:20px">
           <h2>APT组织</h2>
           <div style="margin-top:10px">
-            <span style="font-weight:bold;font-size:20px;padding:5px;background-color:#409EFF;color:white;text-align:center;">{{this.data.name}}</span>
+            <p style="font-weight:bold;font-size:20px;padding:5px;background-color:#409EFF;color:white;text-align:center;">{{this.data.name}}</p>
 
           </div>
         </div>

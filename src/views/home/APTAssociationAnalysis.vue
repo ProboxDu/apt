@@ -832,13 +832,12 @@ export default {
       const { data: ret } = await this.$http.get(api,{params:{params:this.search_value}})
 
       this.val = ret
-
       this.nodes = this.val.graph.nodes
       this.links = this.val.graph.links
       this.data = this.val.data
       //console.log(this.val.graph)
       if(this.data.length==0){
-        this.select = "none"
+        this.select = "query"
         this.show_page = "none"
       }else{
         if(this.data[0].label==="report"){
