@@ -6,7 +6,7 @@
       <el-button type="primary" class="search_button" v-on:click="search">搜索</el-button>
     </div> -->
     <el-row type="flex" justify="center" class="search_box" v-bind:class="{middle: !has_search }">
-      <el-col :span="18">
+      <el-col :span="15">
         <el-input class="input" :placeholder="placeholder" v-model="search_value">
           <el-select v-model="select" slot="prepend" placeholder="---请选择---" style="width:180px">
             <el-option label="关键字查询" value="query"></el-option>
@@ -15,7 +15,7 @@
           </el-select>
         </el-input>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <el-button type="primary" class="search_button" v-on:click="search">搜索</el-button>
       </el-col>
     </el-row>
@@ -170,7 +170,11 @@
           </el-col>
           <el-col :span="12">
             <div id="graph" style="width:1000px;height:760px;margin-top:50px"></div>
+            <div v-if="nodes.length>=50">
+              <span>已达到图谱展示节点数量上限</span>
+            </div>
           </el-col>
+
         </el-row>
 
         <el-row  justify="center" v-else-if="show_page=='report'">
@@ -273,6 +277,9 @@
           <el-col :span="10">
             <div id="graph" style="width:1000px;height:760px;margin-top:50px"></div>
           </el-col>
+          <div v-if="nodes.length>=50">
+            <span>已达到图谱展示节点数量上限</span>
+          </div>
         </el-row>
 
         <el-row  justify="center" v-else-if="show_page=='group'">
@@ -382,6 +389,9 @@
           <el-col :span="10">
             <div id="graph" style="width:1000px;height:760px;margin-top:50px"></div>
           </el-col>
+          <div v-if="nodes.length>=50">
+            <span>已达到图谱展示节点数量上限</span>
+          </div>
         </el-row>
 
         <el-row justify="center" v-else>
@@ -583,7 +593,7 @@ export default {
           categories: this.categories
         }]
       }
-      console.log(option)
+      // console.log(option)
       setTimeout(this.myChart.setOption(option), 500);
     },
     showMiddle(index) {
@@ -688,7 +698,7 @@ export default {
       this.ipData = []
       this.domainData = []
       this.reportData = []
-      console.log(this.data[index].associated)
+      //console.log(this.data[index].associated)
       this.createTableData(this.data[index].associated.report,this.reportData)
       this.createTableData(this.data[index].associated.group,this.groupData)
       this.createTableData(this.data[index].associated.ip,this.ipData)
@@ -823,7 +833,7 @@ export default {
       this.nodes = this.val.graph.nodes
       this.links = this.val.graph.links
       this.data = this.val.data
-      console.log(this.val.graph)
+      //console.log(this.val.graph)
       if(this.data.length==0){
         this.select = "none"
         this.show_page = "none"
@@ -979,8 +989,8 @@ export default {
         let that = this
         that.myChart.on('click',async function(p){
           //console.log("打印变量")
-
-          const { data: ret } = await that.$http.get('/api/analyse/explore_graph',{params:p.data})
+          let param = {"clickdata":p.data,"nodes":that.nodes,"links":that.links}
+          const { data: ret } = await that.$http.post('/api/analyse/explore_graph/',param)
           let val = ret
           //console.log(val)
           that.nodes = val.nodes

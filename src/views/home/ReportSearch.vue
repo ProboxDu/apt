@@ -17,12 +17,16 @@
                   :value="item.value">
               </el-option>
             </el-select>
-            <el-button type="primary" slot="append" icon="el-icon-search" @click="onSubmit"></el-button>
+<!--            <el-button type="primary" slot="append" icon="el-icon-search" @click="onSubmit"></el-button>-->
           </el-input>
+
 <!--          <div style="margin-top: 10px">-->
 <!--            <el-checkbox v-model="form.condition" true-label="and" false-label="or">精确查询(多条件)</el-checkbox>-->
 <!--            <el-checkbox v-model="form.word_segment" true-label="true" false-label="false">模糊匹配</el-checkbox>-->
 <!--          </div>-->
+        </el-col>
+        <el-col :span="3">
+          <el-button type="primary" class="search_button"  @click="onSubmit">搜索</el-button>
         </el-col>
       </el-row>
       <el-row  v-if="search && (reportsTableData.length > 0)" type="flex" justify="space-around" style="height: calc(85vh - 100px); margin-top: 10px">
@@ -58,7 +62,8 @@
           </el-row>
         </el-col>
         <el-col :span="16" style="height:100%">
-          <iframe :src="pdfUrl" height="100%" width="100%" style="border: none"></iframe>
+            <iframe :src="'/static/pdfjs-dist/web/viewer.html?file=' + pdfUrl" height="100%" width="100%" style="border: none"></iframe>
+<!--          <iframe :src="pdfUrl" height="100%" width="100%" style="border: none"></iframe>-->
         </el-col>
       </el-row>
     </el-main>
@@ -103,6 +108,13 @@ export default {
         this.$message.error('请输入关键词查询')
         return
       }
+      // 重写搜索参数
+      let query = this.$router.history.current.query;
+      let path = this.$router.history.current.path;
+      let newQuery = JSON.parse(JSON.stringify(query));
+      newQuery.query = this.form.keywords
+      await this.$router.push({path, query: newQuery})
+
       let params = new FormData()
       for (let i in this.form){
         params.append(i, this.form[i])
@@ -120,7 +132,7 @@ export default {
               if( this.reportsTableData.length > 0){
                 // console.log('set currentrow')
                 this.$refs.reportsTable.setCurrentRow(1);
-                this.pdfUrl = this.reportsTableData[Object.keys(this.reportsTableData)[0]].url
+                this.pdfUrl = this.reportsTableData[Object.keys(this.reportsTableData)[0]].url + '&query=' + this.form.keywords
               }
             });
           }else {
@@ -139,8 +151,9 @@ export default {
     handleCurrentChange(val) {
       // console.log(val)
       this.currentRow = val;
-      this.pdfUrl = val.url
-      // console.log(this.pdfUrl.toString())
+
+      this.pdfUrl = val.url + '&query=' + this.form.keywords
+      console.log(this.pdfUrl.toString())
     },
     // // 每页显示的条数
     // handlePageSizeChange(val) {
@@ -161,7 +174,7 @@ export default {
         text = text.replaceAll('<em>', '<span class="highlight_keywords">')
         text = text.replaceAll('</em>', '</span>')
       }
-      console.log(text)
+      // console.log(text)
       return text
     }
   }

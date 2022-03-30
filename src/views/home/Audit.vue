@@ -7,7 +7,7 @@
   <el-container>
     <el-main>
       <el-row type="flex" justify="center" v-if="fileList.length > 0" style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
-        <el-col ref="auditList" >
+        <el-col ref="auditList" :span="6">
           <h2 style="text-align: center;margin-bottom: 10px;">待审核文件列表</h2>
           <el-row type="flex" justify="center">
             <el-radio-group v-model="radio" @change="radioChange()">
@@ -92,6 +92,7 @@
 
 <script>
 import JsonEditor from "@/components/JsonEditor";
+
 export default {
   name: "Audit",
   components:{
