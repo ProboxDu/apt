@@ -5,40 +5,54 @@
 <!--    </el-tab-pane>-->
 <!--  </el-tabs>-->
   <el-container>
-    <el-main>
-      <el-row type="flex" justify="center" v-if="fileList.length > 0" style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
-        <el-col ref="auditList" :span="6">
-          <h2 style="text-align: center;margin-bottom: 10px;">待审核文件列表</h2>
-          <el-row type="flex" justify="center">
-            <el-radio-group v-model="radio" @change="radioChange()">
-              <el-radio-button label="PDF"></el-radio-button>
-              <el-radio-button label="HTML"></el-radio-button>
-              <el-radio-button label="图片"></el-radio-button>
-            </el-radio-group>
-          </el-row>
+    <el-aside v-if="fileList.length > 0" :width="isCollapse ? '30px' : '350px' ">
+      <el-row type="flex" justify="space-between" style="margin-top: 20px;">
+        <el-select v-if="!isCollapse" v-model="radio" size="mini" style="width:90px">
+          <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+        </el-select>
+        <el-button v-if="!isCollapse" type="warning" @click="deleteReport" size="mini" icon="el-icon-delete"></el-button>
+        <el-button v-if="isCollapse" type="primary" @click="toggleCollapse" circle size="mini" icon="el-icon-arrow-right"></el-button>
+        <el-button v-if="!isCollapse" type="primary" @click="toggleCollapse" circle size="mini" icon="el-icon-arrow-left"></el-button>
+      </el-row>
+      <el-row type="flex" justify="center" v-if="fileList.length > 0 && !isCollapse" style="height: calc(90vh - 120px);margin-top: 20px;min-height: 300px">
+        <el-col ref="auditList">
           <el-table
               :data="fileList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               highlight-current-row
               @current-change="handleCurrentChange"
-              style="">
+              @selection-change="handleSelectionChange"
+              style="width:100%">
             <el-table-column
                 prop="file_name"
                 label="文件名"
                 :show-overflow-tooltip='true'>
+              <template slot-scope="scope">
+                <span v-if="scope.row.isOcrReport === 1">*</span>
+                {{scope.row.file_name}}
+              </template>
             </el-table-column>
             <el-table-column
                 prop="state_code"
                 label="抽取状态"
-                width="90">
+                width="80">
               <template slot-scope="scope">
                 <span v-if="scope.row.state_code === 1">已完成</span>
                 <span v-else>未完成</span>
               </template>
             </el-table-column>
+            <el-table-column
+                type="selection"
+                width="45">
+            </el-table-column>
           </el-table>
           <el-row type="flex" justify="center" >
             <el-pagination
-                :hide-on-single-page="pageNumber <= 1"
+                :hide-on-single-page="pageNumber / pageSize <= 1"
                 @current-change="handleCurrentPageChange"
                 :current-page="currentPage"
                 :page-size="pageSize"
@@ -47,12 +61,16 @@
             </el-pagination>
           </el-row>
         </el-col>
-        <el-col :span="12" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
+      </el-row>
+    </el-aside>
+    <el-main>
+      <el-row type="flex" justify="center" v-if="fileList.length > 0" style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
+        <el-col :span="16" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
           <iframe v-if="radio === 'PDF'"  :src="'/static/pdfjs-dist/web/viewer.html?file=' + pdfUrl" height="100%" width="100%" style="border: none"></iframe>
           <iframe v-else-if="radio === 'HTML'" :src="htmlUrl" height="100%" width="100%" style="border: none"></iframe>
           <img v-else :src="picUrl" height="100%" width="100%" alt="none">
         </el-col>
-        <el-col :span="6" v-if="Object.keys(ioc_result).length > 0" style="height: 100%;margin-left: 10px">
+        <el-col :span="8" v-if="Object.keys(ioc_result).length > 0" style="height: 100%;margin-left: 10px">
           <el-row style="height: calc(90vh - 130px)">
             <JsonEditor
                 ref="jsonEditor"
@@ -69,7 +87,7 @@
           </el-row>
         </el-col>
       </el-row>
-      <el-row type="flex" justify="center" v-else style="margin-top: calc(30vh - 90px);min-height: 300px">
+      <el-row type="flex" justify="center" v-if="fileList.length === 0"  style="margin-top: calc(30vh - 90px);min-height: 300px">
         <el-col :span="8">
           <el-row type="flex" justify="center" style="margin-bottom: 20px">
             <h1>当前暂无待审核文件</h1>
@@ -103,6 +121,16 @@ export default {
       activeName: 'text',
       dialogVisible: false,
       radio: 'PDF',
+      options:[{
+        value: 'PDF',
+        label: 'PDF',
+      },{
+        value: 'HTML',
+        label: 'HTML',
+      },{
+        value: 'PICTURE',
+        label: '图片',
+      }],
       fileList:[],
       currentRow: null,
       pdfUrl:"",
@@ -112,15 +140,61 @@ export default {
       pageNumber: 1,
       currentPage: 1,
       pageSize:10,
+      isCollapse:false,
+      multipleSelection: [],
     };
   },
   methods: {
-    radioChange(){
-      console.log(this.radio)
+    deleteReport() {
+      this.$confirm("此操作将删除服务器上传的报告文件，是否继续？", '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = new FormData()
+        let report_id = []
+        for (let i in this.multipleSelection){
+          report_id.push(this.multipleSelection[i].report_id)
+        }
+        // console.log(report_id)
+        params.append("report_id", report_id)
+        // console.log(params)
+        this.$http.post('/api/infoExtract/delete_report/', params).then((res)=>{
+          let status = res.status;
+          if (status === 200){
+            // console.log(res.data)
+            if (res.data['label'] === 0){
+              this.refreshProgress(this.radio)
+            }else {
+              this.$alert(res.data['message'], '提示', {
+                confirmButtonText: '确定',
+              });
+            }
+          }else{
+            this.$message.error(res.message)
+          }
+        }).catch(function (error) {
+          console.log(error);
+          this.$message.error(error.toString())
+        });
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleCurrentPageChange(val) {
       // 改变默认的页数
       this.currentPage = val
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      // console.log(this.multipleSelection);
     },
     handleCurrentChange(val) {
       // console.log(val)
@@ -134,15 +208,17 @@ export default {
         }else{
           this.picUrl = val.url
         }
+
         this.ioc_result = JSON.parse(val.ioc_result_content)
-        this.$refs.auditList.span = 5
+        this.ioc_result.ner_result = JSON.parse(val.ner_result_content)
+        this.ioc_result.ocr_result = JSON.parse(val.ocr_result_content).ioc_result
+        // console.log(this.ioc_result)
       }else {
         this.pdfUrl = '';
         this.htmlUrl = '';
         this.picUrl = '';
         this.ioc_result = {}
         this.dialogVisible = true
-        this.$refs.auditList.span = 9
       }
     },
     onJsonSave(){
@@ -192,43 +268,44 @@ export default {
       link.click();
       document.body.removeChild(link);
     },
+    toggleCollapse(){
+      this.isCollapse = !this.isCollapse;	//点击折叠按钮后，对isCollapse进行取反
+    },
+    refreshProgress(type){
+      let params = {
+        'type' : type
+      }
+      this.$http.post('/api/infoExtract/refresh_progress/', params).then((res)=>{
+        let status = res.status;
+        if (status === 200){
+          // console.log(res.data)
+          if (res.data['label'] === 0){
+            this.fileList = JSON.parse(res.data['message']).progress_result_list
+            this.pageNumber = this.fileList.length
+            // console.log(this.fileList)
+          }else {
+            this.$alert(res.data['message'], '提示', {
+              confirmButtonText: '确定',
+            });
+          }
+          //this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
+          //console.log(this.pdfUrl)
+        }else{
+          this.$message.error(res.message)
+        }
+      }).catch(function (error) {
+        console.log(error)
+        this.$message.error(error.toString())
+      });
+    }
   },
   created() {
 
   },
   mounted() {
-    let params = {
-      'type' : 'PDF'
-    }
-    this.$http.post('/api/infoExtract/refresh_progress/', params).then((res)=>{
-      let status = res.status;
-      if (status === 200){
-        // console.log(res.data)
-        if (res.data['label'] === 0){
-          this.fileList = JSON.parse(res.data['message']).progress_result_list
-          this.pageNumber = this.fileList.length
-          console.log(this.fileList)
-        }else {
-          this.$alert(res.data['message'], '提示', {
-            confirmButtonText: '确定',
-          });
-        }
-        //this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
-        //console.log(this.pdfUrl)
-      }else{
-        this.$message.error(res.message)
-      }
-    }).catch(function (error) {
-      console.log(error)
-      this.$message.error(error.toString())
-    });
+    this.refreshProgress('PDF');
   },
   watch: {
-    fileList: function(newValue) {
-      if (newValue.length > 0){
-        this.$refs.auditList.span = 9
-      }
-    },
   },
 }
 </script>
