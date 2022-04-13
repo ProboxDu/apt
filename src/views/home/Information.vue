@@ -2,99 +2,44 @@
 <template>
   <div class='information' v-if="this.tableData">
 
-       <el-row type="flex" justify="center">
-      <el-col :span="18">
+    <el-row type="flex" justify="center" v-for="(o,index0) in 3" :key="o" >
+      <el-col :span="8" v-for="(o,index1) in 3" :key="o" style="text-align:center;">
 
-       <el-table
-    :data="tableData"
-    style="width: 100%">
-    <el-table-column
-      label="组织名"
-      width="180">
-      <template slot-scope="scope">
-          <div style="text-align:center;">
-              <span v-if="scope.row.aptName&&scope.row.aptName.length==1">{{ scope.row.aptName[0] }}</span>
+        <el-card :body-style="{ padding: '5px' }" style="margin:10px" v-if="tableData[index0*3+index1]">
+
+          <img :src="require(`@/assets/img/apt-pic/${3*index0+index1+1}.png`)" class="image" style="width:100px;height:100px">
+
+          <div style="padding: 14px;">
+
+            <span style="font-weight:bold;font-size:20px">{{tableData[index0*3+index1].aptName[0]}}</span>
+
+            <div class="bottom clearfix">
+              <el-button type="text" class="button"  @click="handleSearch(tableData[index0*3+index1].aptName[0])">详细信息</el-button>
+            </div>
           </div>
+        </el-card>
 
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="影响地点"
-      width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p v-if="scope.row.affectedLocation&&scope.row.affectedLocation.length>0">{{ scope.row.affectedLocation.join(",") }}</p>
-
-          <div slot="reference" class="name-wrapper" style="text-align:center;">
-            <el-tag size="medium" v-if="scope.row.affectedLocation&&scope.row.affectedLocation.length>0">{{ scope.row.affectedLocation[0] }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-
-      <el-table-column
-      label="影响行业"
-      width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p v-if="scope.row.affectedSector&&scope.row.affectedSector.length>0">{{ scope.row.affectedSector.join(",") }}</p>
-
-          <div slot="reference" class="name-wrapper" style="text-align:center;">
-            <el-tag size="medium" v-if="scope.row.affectedSector&&scope.row.affectedSector.length>0">{{ scope.row.affectedSector[0] }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-
-          <el-table-column
-      label="别名"
-      width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p v-if="scope.row.attackerAlias&&scope.row.attackerAlias.length>0">{{ scope.row.attackerAlias.join(",") }}</p>
-
-          <div slot="reference" class="name-wrapper" style="text-align:center;">
-            <el-tag size="medium" v-if="scope.row.attackerAlias&&scope.row.attackerAlias.length>0">{{ scope.row.attackerAlias[0] }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-
-        <el-table-column
-      label="所属地"
-      width="180">
-      <template slot-scope="scope">
-          <div style="text-align:center;">
-              <span v-if="scope.row.belongLocation&&scope.row.belongLocation.length>0">{{ scope.row.belongLocation[0] }}</span>
-          </div>
-
-      </template>
-    </el-table-column>
-
-    <el-table-column label="操作">
-
-      <template slot-scope="scope">
-              <div style="text-align:center;">
-        <el-button
-          size="mini"
-          @click="handleSearch(scope.$index, scope.row)">详细信息</el-button>
-           </div>
-      </template>
-
-    </el-table-column>
-  </el-table>
-  <div style="text-align:center;margin-top:20px">
-   <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="pagesize"
-          layout="total, prev, pager, next, jumper"
-          :total="total">
-        </el-pagination>
-  </div>
       </el-col>
 
     </el-row>
+
+    <el-row type="flex" justify="center">
+      <el-col :span="20">
+
+        <div style="text-align:center;margin-top:20px">
+          <el-pagination
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-size="pagesize"
+              layout="total, prev, pager, next, jumper"
+              :total="total">
+          </el-pagination>
+        </div>
+      </el-col>
+
+    </el-row>
+
+
   </div>
 </template>
 
@@ -108,12 +53,11 @@ export default {
   data () {
     // 这里存放数据
     return {
-        currentPage:1,
-        pagesize:10,
-        total : 39,
-        tableData:null,
-
-      }
+      currentPage:1,
+      pagesize:9,
+      total : 40,
+      tableData:null,
+    }
   },
   // 监听属性 类似于data概念
   computed: {},
@@ -138,23 +82,27 @@ export default {
   activated () { }, // 如果页面有keep-alive缓存功能，这个函数会触发
   // 方法集合
   methods: {
-      handleSearch(index, row) {
-        console.log(index, row);
-        let aptname = row.aptName
-        this.$router.push({path:'/groupInfo?aptname='+aptname})
-      },
-      handleCurrentChange: async function(current){
-        this.currentPage = current
-          const { data: ret } = await this.$http.get('/api/apt/list/'+this.currentPage)
-         this.total = ret.total
-         this.tableData = ret.data
+    handleSearch(aptname) {
 
-      }
+      this.$router.push({path:'/groupInfo?aptname='+aptname})
+    },
+    handleCurrentChange: async function(current){
+      this.currentPage = current
+      const { data: ret } = await this.$http.get('/api/apt/list/'+this.currentPage)
+      console.log(ret)
+      this.total = ret.total
+      this.tableData = ret.data
+
+
+    }
   }
 }
 </script>
 
 <style>
-
+.information{
+  margin: auto;
+  width: 50%;
+}
 
 </style>
