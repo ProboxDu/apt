@@ -10,7 +10,7 @@
         <el-menu-item index="/"><b>APT威胁情报知识库</b></el-menu-item>
       </el-col>
       <el-col>
-        <el-menu-item index="" disabled="true"></el-menu-item>
+        <el-menu-item index=""></el-menu-item>
       </el-col>
       <el-col>
         <el-row type="flex" justify="end">
