@@ -37,6 +37,7 @@ export default {
         {index:'/information', label: 'APT组织'},
         {index:'/reportmanage', label: '报告上传与管理'},
         {index:'/audit', label: '信息审核'},
+        {index:'/statistic', label: '数据总览'},
       ],
       activeIndex: "/reportsearch"
     };

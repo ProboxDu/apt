@@ -1,9 +1,9 @@
 <template>
-<!--  <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">-->
-<!--    <el-tab-pane label="信息审核" name="text">-->
-<!--      -->
-<!--    </el-tab-pane>-->
-<!--  </el-tabs>-->
+  <!--  <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">-->
+  <!--    <el-tab-pane label="信息审核" name="text">-->
+  <!--      -->
+  <!--    </el-tab-pane>-->
+  <!--  </el-tabs>-->
   <el-container>
     <el-aside v-if="fileList.length > 0" :width="isCollapse ? '30px' : '350px' ">
       <el-row type="flex" justify="space-between" style="margin-top: 20px;">
@@ -15,11 +15,15 @@
               :value="item.value">
           </el-option>
         </el-select>
-        <el-button v-if="!isCollapse" type="warning" @click="deleteReport" size="mini" icon="el-icon-delete"></el-button>
-        <el-button v-if="isCollapse" type="primary" @click="toggleCollapse" circle size="mini" icon="el-icon-arrow-right"></el-button>
-        <el-button v-if="!isCollapse" type="primary" @click="toggleCollapse" circle size="mini" icon="el-icon-arrow-left"></el-button>
+        <el-button v-if="!isCollapse" type="warning" @click="deleteReport" size="mini"
+                   icon="el-icon-delete"></el-button>
+        <el-button v-if="isCollapse" type="primary" @click="toggleCollapse" circle size="mini"
+                   icon="el-icon-arrow-right"></el-button>
+        <el-button v-if="!isCollapse" type="primary" @click="toggleCollapse" circle size="mini"
+                   icon="el-icon-arrow-left"></el-button>
       </el-row>
-      <el-row type="flex" justify="center" v-if="fileList.length > 0 && !isCollapse" style="height: calc(90vh - 120px);margin-top: 20px;min-height: 300px">
+      <el-row type="flex" justify="center" v-if="fileList.length > 0 && !isCollapse"
+              style="height: calc(90vh - 120px);margin-top: 20px;min-height: 300px">
         <el-col ref="auditList">
           <el-table
               :data="fileList.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
@@ -33,7 +37,7 @@
                 :show-overflow-tooltip='true'>
               <template slot-scope="scope">
                 <span v-if="scope.row.isOcrReport === 1">*</span>
-                {{scope.row.file_name}}
+                {{ scope.row.file_name }}
               </template>
             </el-table-column>
             <el-table-column
@@ -50,7 +54,7 @@
                 width="45">
             </el-table-column>
           </el-table>
-          <el-row type="flex" justify="center" >
+          <el-row type="flex" justify="center">
             <el-pagination
                 :hide-on-single-page="pageNumber / pageSize <= 1"
                 @current-change="handleCurrentPageChange"
@@ -64,30 +68,79 @@
       </el-row>
     </el-aside>
     <el-main>
-      <el-row type="flex" justify="center" v-if="fileList.length > 0" style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
+      <el-row type="flex" justify="center" v-if="fileList.length > 0"
+              style="height: calc(90vh - 90px);margin-top: 20px;min-height: 300px">
         <el-col :span="16" v-if="pdfUrl !== '' || htmlUrl !== '' || picUrl !== ''" style="margin-left: 10px">
-          <iframe v-if="radio === 'PDF'"  :src="'/static/pdfjs-dist/web/viewer.html?file=' + pdfUrl" height="100%" width="100%" style="border: none"></iframe>
+          <iframe v-if="radio === 'PDF'" :src="'/static/pdfjs-dist/web/viewer.html?file=' + pdfUrl" height="100%"
+                  width="100%" style="border: none"></iframe>
           <iframe v-else-if="radio === 'HTML'" :src="htmlUrl" height="100%" width="100%" style="border: none"></iframe>
           <img v-else :src="picUrl" height="100%" width="100%" alt="none">
         </el-col>
         <el-col :span="8" v-if="Object.keys(ioc_result).length > 0" style="height: 100%;margin-left: 10px">
           <el-row style="height: calc(90vh - 130px)">
-            <JsonEditor
-                ref="jsonEditor"
-                v-model="ioc_result"
+            <!--            <JsonEditor-->
+            <!--                ref="jsonEditor"-->
+            <!--                v-model="ioc_result"-->
+            <!--            >-->
+            <!--              <el-row type="flex" justify="center" style="margin-top: 10px">-->
+            <!--                <el-button-group>-->
+            <!--                  <el-button type="primary" @click="onJsonSave" size="mini">保存</el-button>-->
+            <!--                  <el-button type="primary" @click="onJsonSubmit" size="mini">提交</el-button>-->
+            <!--                </el-button-group>-->
+            <!--                <el-button type="primary" @click="onJsonExport" size="mini">导出</el-button>-->
+            <!--              </el-row>-->
+            <!--            </JsonEditor>-->
+            <!--            <div v-for="(value, index) in ioc_result[typeResult] " :key="index">-->
+            <!--              {{ index }} : {{ value.key }} : {{value.value}}-->
+            <!--            </div>-->
+            <el-row type="flex" justify="center" style="margin-top: 10px">
+              <el-select v-model="typeResult" size="mini" style="width:120px">
+                <el-option
+                    v-for="item in optionsType"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+              </el-select>
+              <el-button-group>
+                <el-button type="primary" @click="onTableSave" size="mini">保存</el-button>
+                <el-button type="primary" @click="onTableSubmit" size="mini">提交</el-button>
+              </el-button-group>
+              <el-button type="primary" @click="onTableExport" size="mini">导出</el-button>
+            </el-row>
+            <el-table
+                :data="ioc_result[typeResult]"
+                highlight-current-row
+                style="width:100%;height: calc(90vh - 150px);overflow:auto;"
             >
-              <el-row type="flex" justify="center" style="margin-top: 10px">
-                <el-button-group>
-                  <el-button type="primary" @click="onJsonSave" size="mini">保存</el-button>
-                  <el-button type="primary" @click="onJsonSubmit" size="mini">提交</el-button>
-                </el-button-group>
-                <el-button type="primary" @click="onJsonExport" size="mini">导出</el-button>
-              </el-row>
-            </JsonEditor>
+              <el-table-column type="expand">
+                <template v-slot="scope">
+                  <el-form v-model="scope.row.key">
+                    <el-form-item v-for="(item,index) in scope.row.value" :key="index">
+                      <el-input v-model="scope.row.value[index]" clearable></el-input>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template v-slot="scope">
+                  <span> {{ scope.row.key }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template v-slot="scope">
+                  <el-button-group>
+                    <el-button type="primary" @click="onTableAdd(scope.row)" size="mini" icon="el-icon-plus"></el-button>
+                    <el-button type="primary" @click="onTableDel(scope.row)" size="mini" icon="el-icon-minus"></el-button>
+                  </el-button-group>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-row>
         </el-col>
       </el-row>
-      <el-row type="flex" justify="center" v-if="fileList.length === 0"  style="margin-top: calc(30vh - 90px);min-height: 300px">
+      <el-row type="flex" justify="center" v-if="fileList.length === 0"
+              style="margin-top: calc(30vh - 90px);min-height: 300px">
         <el-col :span="8">
           <el-row type="flex" justify="center" style="margin-bottom: 20px">
             <h1>当前暂无待审核文件</h1>
@@ -113,7 +166,7 @@ import JsonEditor from "@/components/JsonEditor";
 
 export default {
   name: "Audit",
-  components:{
+  components: {
     JsonEditor
   },
   data() {
@@ -121,27 +174,38 @@ export default {
       activeName: 'text',
       dialogVisible: false,
       radio: 'PDF',
-      options:[{
+      options: [{
         value: 'PDF',
         label: 'PDF',
-      },{
+      }, {
         value: 'HTML',
         label: 'HTML',
-      },{
+      }, {
         value: 'PICTURE',
         label: '图片',
       }],
-      fileList:[],
+      fileList: [],
       currentRow: null,
-      pdfUrl:"",
-      htmlUrl:"",
+      pdfUrl: "",
+      htmlUrl: "",
       picUrl: "",
-      ioc_result: {},
+      ioc_result: [],
       pageNumber: 1,
       currentPage: 1,
-      pageSize:10,
-      isCollapse:false,
+      pageSize: 10,
+      isCollapse: false,
       multipleSelection: [],
+      typeResult: 'ioc_result',
+      optionsType: [{
+        value: 'ioc_result',
+        label: 'ioc_result',
+      }, {
+        value: 'ner_result',
+        label: 'ner_result',
+      }, {
+        value: 'ocr_result',
+        label: 'ocr_result',
+      }],
     };
   },
   methods: {
@@ -153,24 +217,24 @@ export default {
       }).then(() => {
         let params = new FormData()
         let report_id = []
-        for (let i in this.multipleSelection){
+        for (let i in this.multipleSelection) {
           report_id.push(this.multipleSelection[i].report_id)
         }
         // console.log(report_id)
         params.append("report_id", report_id)
         // console.log(params)
-        this.$http.post('/api/infoExtract/delete_report/', params).then((res)=>{
+        this.$http.post('/api/infoExtract/delete_report/', params).then((res) => {
           let status = res.status;
-          if (status === 200){
+          if (status === 200) {
             // console.log(res.data)
-            if (res.data['label'] === 0){
+            if (res.data['label'] === 0) {
               this.refreshProgress(this.radio)
-            }else {
+            } else {
               this.$alert(res.data['message'], '提示', {
                 confirmButtonText: '确定',
               });
             }
-          }else{
+          } else {
             this.$message.error(res.message)
           }
         }).catch(function (error) {
@@ -196,32 +260,41 @@ export default {
       this.multipleSelection = val;
       // console.log(this.multipleSelection);
     },
+    json2list(json) {
+      const list = Object.keys(json).map((item,) => ({key: item, value: json[item]}))
+      // console.log(json)
+      return list
+    },
     handleCurrentChange(val) {
-      // console.log(val)
+      console.log(val)
       this.currentRow = val;
-      if (val.state_code === 1){
-        if (this.radio === 'PDF'){
+      if (val.state_code === 1) {
+        if (this.radio === 'PDF') {
           this.pdfUrl = val.highlight_pdf_url
           // console.log(this.pdfUrl)
-        }else if (this.radio === 'HTML'){
+        } else if (this.radio === 'HTML') {
           this.htmlUrl = val.url
-        }else{
+        } else {
           this.picUrl = val.url
         }
+        this.ioc_result = []
 
-        this.ioc_result = JSON.parse(val.ioc_result_content)
-        this.ioc_result.ner_result = JSON.parse(val.ner_result_content)
-        this.ioc_result.ocr_result = JSON.parse(val.ocr_result_content).ioc_result
-        // console.log(this.ioc_result)
-      }else {
+        this.ioc_result.ioc_result = this.json2list(JSON.parse(val.ioc_result_content).ioc_result)
+        if (val.ner_result_content !== "")
+          this.ioc_result.ner_result = this.json2list(JSON.parse(val.ner_result_content))
+        if (val.ocr_result_content !== "")
+          this.ioc_result.ocr_result = this.json2list(JSON.parse(val.ocr_result_content).ioc_result)
+        // console.log(typeof this.ioc_result)
+        console.log(this.ioc_result)
+      } else {
         this.pdfUrl = '';
         this.htmlUrl = '';
         this.picUrl = '';
-        this.ioc_result = {}
+        this.ioc_result = []
         this.dialogVisible = true
       }
     },
-    onJsonSave(){
+    onJsonSave() {
       let value = this.$refs.jsonEditor.getValue()
       if (this.ioc_result !== value) {
         this.ioc_result = value;
@@ -229,12 +302,12 @@ export default {
     },
     onJsonSubmit() {
       let params = new FormData()
-      for (let i in this.ioc_result){
+      for (let i in this.ioc_result) {
         params.append(i, this.ioc_result[i])
       }
-      this.$http.post('/api/infoExtract/submit', params).then((res)=>{
+      this.$http.post('/api/infoExtract/submit', params).then((res) => {
         let status = res.status;
-        if (status === 200){
+        if (status === 200) {
           console.log(res.data);
           this.$alert(res.data['message'], '提示', {
             confirmButtonText: '确定',
@@ -247,7 +320,7 @@ export default {
           //     confirmButtonText: '确定',
           //   });
           // }
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       }).catch(function (error) {
@@ -255,7 +328,7 @@ export default {
         this.$message.error(error.toString())
       });
     },
-    onJsonExport(){
+    onJsonExport() {
       var data = JSON.stringify(this.ioc_result)
       //encodeURIComponent解决中文乱码
       let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(data);
@@ -263,40 +336,43 @@ export default {
       let link = document.createElement("a");
       link.href = uri;
       //对下载的文件命名
-      link.download =  "ioc_result.json";
+      link.download = "ioc_result.json";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     },
-    toggleCollapse(){
+    toggleCollapse() {
       this.isCollapse = !this.isCollapse;	//点击折叠按钮后，对isCollapse进行取反
     },
-    refreshProgress(type){
+    refreshProgress(type) {
       let params = {
-        'type' : type
+        'type': type
       }
-      this.$http.post('/api/infoExtract/refresh_progress/', params).then((res)=>{
+      this.$http.post('/api/infoExtract/refresh_progress/', params).then((res) => {
         let status = res.status;
-        if (status === 200){
+        if (status === 200) {
           // console.log(res.data)
-          if (res.data['label'] === 0){
+          if (res.data['label'] === 0) {
             this.fileList = JSON.parse(res.data['message']).progress_result_list
             this.pageNumber = this.fileList.length
             // console.log(this.fileList)
-          }else {
+          } else {
             this.$alert(res.data['message'], '提示', {
               confirmButtonText: '确定',
             });
           }
           //this.pdfUrl = this.reports[Object.keys(this.reports)[0]].url
           //console.log(this.pdfUrl)
-        }else{
+        } else {
           this.$message.error(res.message)
         }
       }).catch(function (error) {
         console.log(error)
         this.$message.error(error.toString())
       });
+    },
+    onchangeSave(val) {
+      console.log(val)
     }
   },
   created() {
@@ -305,8 +381,7 @@ export default {
   mounted() {
     this.refreshProgress('PDF');
   },
-  watch: {
-  },
+  watch: {},
 }
 </script>
 

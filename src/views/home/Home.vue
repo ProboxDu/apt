@@ -19,6 +19,7 @@ import Header from "@/components/Header";
 import ReportSearch from "@/views/home/ReportSearch";
 import APTAssociationAnalysis from "@/views/home/APTAssociationAnalysis";
 import Information from "@/views/home/Information";
+import Statistic from "@/views/home/Statistic";
 import Group from "@/views/home/Group";
 import ReportManage from "@/views/home/ReportManage";
 import Audit from "@/views/home/Audit";
@@ -30,6 +31,7 @@ export default {
     Header,
     ReportSearch,
     Information,
+    Statistic,
     Group,
     APTAssociationAnalysis,
     ReportManage,

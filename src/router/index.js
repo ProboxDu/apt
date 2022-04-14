@@ -54,6 +54,10 @@ const routes = [
             {
                 path: '/groupinfo',
                 component: () => import('@/views/home/Group')
+            },
+            {
+                path: '/statistic',
+                component: () => import(`@/views/home/Statistic`)
             }
         ]
     },
