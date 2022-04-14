@@ -93,7 +93,7 @@
             <!--            <div v-for="(value, index) in ioc_result[typeResult] " :key="index">-->
             <!--              {{ index }} : {{ value.key }} : {{value.value}}-->
             <!--            </div>-->
-            <el-row type="flex" justify="center" style="margin-top: 10px">
+            <el-row type="flex" justify="center">
               <el-select v-model="typeResult" size="mini" style="width:120px">
                 <el-option
                     v-for="item in optionsType"
@@ -103,21 +103,25 @@
                 </el-option>
               </el-select>
               <el-button-group>
-                <el-button type="primary" @click="onTableSave" size="mini">保存</el-button>
+<!--                <el-button type="primary" @click="onTableSave" size="mini">保存</el-button>-->
                 <el-button type="primary" @click="onTableSubmit" size="mini">提交</el-button>
+                <el-button type="primary" @click="onTableExport" size="mini">导出</el-button>
               </el-button-group>
-              <el-button type="primary" @click="onTableExport" size="mini">导出</el-button>
+
             </el-row>
             <el-table
                 :data="ioc_result[typeResult]"
                 highlight-current-row
-                style="width:100%;height: calc(90vh - 150px);overflow:auto;"
+                style="width:100%;height: calc(90vh - 130px);overflow:auto;margin-top: 10px"
             >
               <el-table-column type="expand">
                 <template v-slot="scope">
                   <el-form v-model="scope.row.key">
                     <el-form-item v-for="(item,index) in scope.row.value" :key="index">
-                      <el-input v-model="scope.row.value[index]" clearable></el-input>
+                      <el-row type="flex" justify="space-around">
+                        <el-input v-model="scope.row.value[index]" clearable></el-input>
+                        <el-button type="danger" @click="onTableIndexDel(scope.row, index)" size="mini" icon="el-icon-delete"></el-button>
+                      </el-row>
                     </el-form-item>
                   </el-form>
                 </template>
@@ -277,7 +281,7 @@ export default {
         } else {
           this.picUrl = val.url
         }
-        this.ioc_result = []
+        this.ioc_result = {}
 
         this.ioc_result.ioc_result = this.json2list(JSON.parse(val.ioc_result_content).ioc_result)
         if (val.ner_result_content !== "")
@@ -290,7 +294,7 @@ export default {
         this.pdfUrl = '';
         this.htmlUrl = '';
         this.picUrl = '';
-        this.ioc_result = []
+        this.ioc_result = {}
         this.dialogVisible = true
       }
     },
@@ -371,9 +375,34 @@ export default {
         this.$message.error(error.toString())
       });
     },
-    onchangeSave(val) {
-      console.log(val)
-    }
+    onTableIndexDel(val, index){
+      val.value.splice(index, 1);
+    },
+    onTableAdd(val){
+      val.value.unshift("");
+      // console.log(val);
+    },
+    onTableDel(val){
+      val.value.splice(0,val.value.length);
+      // console.log(val);
+    },
+    onTableSubmit(){
+      let param = {url:this.pdfUrl,ioc:this.ioc_result}
+      this.$http.post('/api/infoExtract/submit_audit/',param)
+    },
+    onTableExport() {
+      var data = JSON.stringify(this.ioc_result)
+      //encodeURIComponent解决中文乱码
+      let uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(data);
+      //通过创建a标签实现
+      let link = document.createElement("a");
+      link.href = uri;
+      //对下载的文件命名
+      link.download = "ioc_result.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
   },
   created() {
 
